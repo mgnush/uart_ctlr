@@ -1,0 +1,6 @@
+# Waveforms
+*.vcd
+
+# Verilator generated files
+obj_dir/
+obj_dir_*/
