@@ -2,7 +2,8 @@
 /* verilator lint_off IMPORTSTAR */
 import types_pkg::*;
 
-module uart_rx (
+module uart_rx 
+(
   input logic clk,
   input logic rstN,
   input uart_parity_e parity_mode,
@@ -82,7 +83,7 @@ module uart_rx (
         end
 
         DATA_BITS: begin
-          //replace with data width parameter
+          //todo: replace with data width parameter?
           if (baud_counter == (baud_div / 2)) begin
             data[bit_count] <= rx;
           end

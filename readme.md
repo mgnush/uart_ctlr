@@ -9,7 +9,7 @@ The UART consists of the following modules:
 `uart_interface`: Memory-mapped register interface and top-level UART control  
 `uart_tx`: UART transmitter  
 `uart_rx`: UART receiver  
-`fifo`: 8-byte circular FIFO, instantiated separately for TX and RX  
+`fifo`: Parameterised depth circular FIFO, instantiated separately for TX and RX  
 ```
       (top)
         │
@@ -72,7 +72,7 @@ Only the lower 8 bits of `TX_DATA` and `RX_DATA` contain UART data.
 | 31:16 | `BAUD_DIV`    | Baud-rate clock divider |  
 
 ## FIFO Behaviour
-Both TX and RX use 8-byte circular FIFOs.
+Both TX and RX use N-byte circular FIFOs. Modify FIFO_DEPTH parameter to change fifo depth (default = 8).
 The FIFOs continuously present the oldest entry. A read advances the read pointer.
 
 Writing to a full FIFO overwrites its oldest entry. The UART interface prevents
@@ -110,5 +110,5 @@ The individual modules are simulated using Verilator.
 make tx
 make rx
 make fifo
-make uart
+make uart [FIFO_DEPTH=x]
 ```

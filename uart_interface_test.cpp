@@ -95,7 +95,6 @@ int main(int argc, char** argv) {
     rx_data = top->read_data;
     top->addr = 0x8;
     clock_cycle(*top, *context, *trace);
-    
     rx_empty = ((top->read_data >> 7) & 0x1);
     printf("Read %d\n", rx_data);
   }

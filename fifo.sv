@@ -5,7 +5,9 @@ import types_pkg::*;
 /* Implement as memory-like registers / circular fifo
    which should scale better at higher depths.
 */
-module fifo (
+module fifo 
+#(parameter DEPTH = 8)
+(
   input logic clk,
   input logic rstN,
   input logic write,
@@ -16,12 +18,15 @@ module fifo (
   output logic full // Writing when full will overwrite oldest member 
 );
 
-  logic [7:0] data [7:0];
-  logic [2:0] write_i, read_i;
-  logic [3:0] full_counter;
+  localparam INDEX_WIDTH = $clog2(DEPTH);
+  localparam COUNTER_WIDTH = $clog2(DEPTH + 1);
 
-  function automatic logic [2:0] index_incr(input logic [2:0] in);
-    if (in == 7)
+  logic [7:0] data [DEPTH-1:0];
+  logic [INDEX_WIDTH-1:0] write_i, read_i;
+  logic [COUNTER_WIDTH-1:0] full_counter;
+
+  function automatic logic [INDEX_WIDTH-1:0] index_incr(input logic [INDEX_WIDTH-1:0] in);
+    if (in == INDEX_WIDTH'(DEPTH - 1))
       index_incr = '0;
     else
       index_incr = in + 1;
@@ -29,7 +34,7 @@ module fifo (
 
   always_comb begin
     empty = (full_counter == 0);
-    full = (full_counter == 8);
+    full = (full_counter == COUNTER_WIDTH'(DEPTH));
     data_out = data[read_i];
   end
 
@@ -44,7 +49,7 @@ module fifo (
         2'b10: begin
           data[write_i] <= data_in;
           write_i <= index_incr(write_i);
-          if (full_counter < 8)
+          if (full_counter < COUNTER_WIDTH'(DEPTH))
             full_counter <= full_counter + 1;
           else
             read_i <= index_incr(read_i);
@@ -61,7 +66,6 @@ module fifo (
         default: ;
       endcase
     end
-
   end
 
 endmodule

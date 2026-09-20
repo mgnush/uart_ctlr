@@ -2,7 +2,9 @@
 /* verilator lint_off IMPORTSTAR */
 import types_pkg::*;
 
-module uart_interface (
+module uart_interface 
+#(parameter FIFO_DEPTH = 8)
+(
   input logic clk,
   input logic rstN,
   input logic write,
@@ -45,8 +47,8 @@ logic tx_fifo_state;
 
 uart_tx uart_tx (.busy(tx_busy), .tx_data(tx_fifo_out), .ready(tx_ready), .data_valid(tx_data_valid), .*);
 uart_rx uart_rx (.busy(rx_busy), .rx_data(rx_fifo_in), .parity_fault(rx_parity_fault), .stop_fault(rx_stop_fault), .data_ready(rx_data_ready), .*);
-fifo fifo_tx (.write(tx_fifo_write), .read(tx_fifo_read), .data_in(tx_fifo_in), .data_out(tx_fifo_out), .empty(tx_empty), .full(tx_full), .*);
-fifo fifo_rx (.write(rx_data_ready), .read(rx_fifo_read), .data_in(rx_fifo_in), .data_out(rx_fifo_out), .empty(rx_empty), .full(rx_full), .*);
+fifo #(.DEPTH(FIFO_DEPTH)) fifo_tx (.write(tx_fifo_write), .read(tx_fifo_read), .data_in(tx_fifo_in), .data_out(tx_fifo_out), .empty(tx_empty), .full(tx_full), .*);
+fifo #(.DEPTH(FIFO_DEPTH)) fifo_rx (.write(rx_data_ready), .read(rx_fifo_read), .data_in(rx_fifo_in), .data_out(rx_fifo_out), .empty(rx_empty), .full(rx_full), .*);
 
 // Don't register tx fifo writes to reduce latency and avoid timing issues on single-cycle writes
 assign tx_fifo_write = write && !tx_full && (addr[3:0] == TX_DATA);

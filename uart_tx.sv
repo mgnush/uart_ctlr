@@ -7,7 +7,8 @@ import types_pkg::*;
    start condition is sent with a 2 cycle delay from data_valid.
 */
 
-module uart_tx (
+module uart_tx 
+(
   input logic clk,
   input logic rstN,
   input logic [7:0] tx_data,
@@ -94,7 +95,7 @@ module uart_tx (
         end
 
         DATA_BITS: begin
-          //replace with data width parameter
+          //todo: replace with data width variable?
           tx <= data[bit_count];
           if (baud_counter == (baud_div - 1)) begin  
             if (bit_count == 3'd7)
