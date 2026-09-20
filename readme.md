@@ -23,53 +23,53 @@ uart_tx     uart_rx
 ```
 
 ## Interface
-| Signal | Dir | Desc |
-| :--- | :--- | :--- |
-| `clk`       | Input  1  | System clock | 
-| `rstN`      | Input  1  | Active-low asynchronous reset | 
-| `write`     | Input  1  | Register write request | 
-| `read`      | Input  1  | Register read request | 
-| `addr`      | Input  32 | Byte address | 
-| `write_data`| Input  32 | Register write data | 
-| `read_data` | Output 32 | Register read data |  
-| `tx`        | Output 1  | UART serial transmit |  
-| `rx`        | Input  1  | UART serial receive | 
+| Signal | Dir | Size | Desc |
+| :--- | :--- | :--- | :--- |
+| `clk`       | Input | 1 | System clock | 
+| `rstN`      | Input | 1 | Active-low asynchronous reset | 
+| `write`     | Input | 1 | Register write request | 
+| `read`      | Input | 1 | Register read request | 
+| `addr`      | Input | 32 | Byte address | 
+| `write_data`| Input | 32 | Register write data | 
+| `read_data` | Output | 32 | Register read data |  
+| `tx`        | Output | 1 | UART serial transmit |  
+| `rx`        | Input  | 1 | UART serial receive | 
 
 `read` and `write` are mutually exclusive.
 
 ## Register Map
-
-`0x00` | `TX_DATA` | W  | Write a byte to the TX FIFO  
-`0x04` | `RX_DATA` | R  | Read the oldest byte from the RX FIFO  
-`0x08` | `STATUS`  | R  | UART and FIFO status  
-`0x0C` | `CTRL`    | RW | UART configuration  
-
+| Addr | Name | R/W | Desc |
+| :--- | :--- | :--- | :--- |
+| `0x00` | `TX_DATA` | W  | Write a byte to the TX FIFO | 
+| `0x04` | `RX_DATA` | R  | Read the oldest byte from the RX FIFO | 
+| `0x08` | `STATUS`  | R  | UART and FIFO status | 
+| `0x0C` | `CTRL`    | RW | UART configuration | 
 
 Only the lower 8 bits of `TX_DATA` and `RX_DATA` contain UART data.  
 
 ### STATUS (0x08)
+| Bit | Name | Desc |
+| :--- | :--- | :--- |
+| 0     | `TX_BUSY`         | Transmitter is currently active | 
+| 1     | `RX_BUSY`         | Receiver is currently active | 
+| 2     | `RX_STOP_FAULT`   | Stop-bit error detected | 
+| 3     | `RX_PARITY_FAULT` | Parity error detected | 
+| 4     | `TX_FULL`         | TX FIFO is full | 
+| 5     | `TX_EMPTY`        | TX FIFO is empty | 
+| 6     | `RX_FULL`         | RX FIFO is full | 
+| 7     | `RX_EMPTY`        | RX FIFO is empty | 
+| 8     | `RX_OVERFLOW`     | RX FIFO overflow has occurred | 
+| 9     | `TX_OVERFLOW`     | Write attempted while TX FIFO was full | 
+| 31:10 | -                 | Reserved | 
 
-0     | `TX_BUSY`         | Transmitter is currently active  
-1     | `RX_BUSY`         | Receiver is currently active  
-2     | `RX_STOP_FAULT`   | Stop-bit error detected  
-3     | `RX_PARITY_FAULT` | Parity error detected  
-4     | `TX_FULL`         | TX FIFO is full  
-5     | `TX_EMPTY`        | TX FIFO is empty  
-6     | `RX_FULL`         | RX FIFO is full  
-7     | `RX_EMPTY`        | RX FIFO is empty  
-8     | `RX_OVERFLOW`     | RX FIFO overflow has occurred  
-9     | `TX_OVERFLOW`     | Write attempted while TX FIFO was full  
-31:10 | -                 | Reserved  
-
- 
 `RX_OVERFLOW` and `TX_OVERFLOW` are sticky flags, cleared when `STATUS` is read.  
 
 ### CTRL (0x0C)
-
-1:0   | `PARITY_MODE` | UART parity configuration (0 = None, 1 = Odd, 2 = Even)  
-15:2  | -             | Reserved    
-31:16 | `BAUD_DIV`    | Baud-rate clock divider   
-
+| Bit | Name | Desc |
+| :--- | :--- | :--- |
+| 1:0   | `PARITY_MODE` | UART parity configuration (0 = None, 1 = Odd, 2 = Even) | 
+| 15:2  | -             | Reserved |   
+| 31:16 | `BAUD_DIV`    | Baud-rate clock divider |  
 
 ## FIFO Behaviour
 Both TX and RX use 8-byte circular FIFOs.
