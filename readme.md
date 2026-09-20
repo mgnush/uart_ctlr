@@ -5,7 +5,7 @@ Transmit and receive functionaliy with FIFOs, with a simple 32bit memory-mapped 
 The memory is word-aligned to make cpu integration easier later.
 
 ## Architecture
-The UART consists of the following modules:
+The UART consists of the following modules:  
 `uart_interface`: Memory-mapped register interface and top-level UART control  
 `uart_tx`: UART transmitter  
 `uart_rx`: UART receiver  
@@ -23,7 +23,7 @@ uart_tx     uart_rx
 ```
 
 ## Interface
-### `uart_interface`
+<pre>
 `clk`       | Input  1  | System clock  
 `rstN`      | Input  1  | Active-low asynchronous reset  
 `write`     | Input  1  | Register write request  
@@ -33,7 +33,7 @@ uart_tx     uart_rx
 `read_data` | Output 32 | Register read data   
 `tx`        | Output 1  | UART serial transmit  
 `rx`        | Input  1  | UART serial receive  
-
+</pre>
 `read` and `write` are mutually exclusive.
 
 ## Register Map
