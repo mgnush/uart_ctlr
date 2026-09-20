@@ -6,11 +6,11 @@ The memory is word-aligned to make cpu integration easier later.
 
 ## Architecture
 The UART consists of the following modules:
-`uart_interface`: Memory-mapped register interface and top-level UART control
-`uart_tx`: UART transmitter
-`uart_rx`: UART receiver
-`fifo`: 8-byte circular FIFO, instantiated separately for TX and RX
-
+`uart_interface`: Memory-mapped register interface and top-level UART control  
+`uart_tx`: UART transmitter  
+`uart_rx`: UART receiver  
+`fifo`: 8-byte circular FIFO, instantiated separately for TX and RX  
+```
       (top)
         │
   uart_interface
@@ -20,48 +20,49 @@ tx fifo     rx fifo
 uart_tx     uart_rx
    |           │
   tx           rx
+```
 
 ## Interface
 ### `uart_interface`
-`clk`       | Input  1  | System clock 
-`rstN`      | Input  1  | Active-low asynchronous reset 
-`write`     | Input  1  | Register write request 
-`read`      | Input  1  | Register read request 
-`addr`      | Input  32 | Byte address 
-`write_data`| Input  32 | Register write data 
-`read_data` | Output 32 | Register read data 
-`tx`        | Output 1  | UART serial transmit 
-`rx`        | Input  1  | UART serial receive 
+`clk`       | Input  1  | System clock  
+`rstN`      | Input  1  | Active-low asynchronous reset  
+`write`     | Input  1  | Register write request  
+`read`      | Input  1  | Register read request  
+`addr`      | Input  32 | Byte address  
+`write_data`| Input  32 | Register write data  
+`read_data` | Output 32 | Register read data   
+`tx`        | Output 1  | UART serial transmit  
+`rx`        | Input  1  | UART serial receive  
 
 `read` and `write` are mutually exclusive.
 
 ## Register Map
-`0x00` | `TX_DATA` | W  | Write a byte to the TX FIFO 
-`0x04` | `RX_DATA` | R  | Read the oldest byte from the RX FIFO 
-`0x08` | `STATUS`  | R  | UART and FIFO status 
-`0x0C` | `CTRL`    | RW | UART configuration 
+`0x00` | `TX_DATA` | W  | Write a byte to the TX FIFO  
+`0x04` | `RX_DATA` | R  | Read the oldest byte from the RX FIFO  
+`0x08` | `STATUS`  | R  | UART and FIFO status  
+`0x0C` | `CTRL`    | RW | UART configuration  
 
-Only the lower 8 bits of `TX_DATA` and `RX_DATA` contain UART data.
+Only the lower 8 bits of `TX_DATA` and `RX_DATA` contain UART data.  
 
 ### STATUS (0x08)
-0     | `TX_BUSY`         | Transmitter is currently active 
-1     | `RX_BUSY`         | Receiver is currently active 
-2     | `RX_STOP_FAULT`   | Stop-bit error detected 
-3     | `RX_PARITY_FAULT` | Parity error detected 
-4     | `TX_FULL`         | TX FIFO is full 
-5     | `TX_EMPTY`        | TX FIFO is empty 
-6     | `RX_FULL`         | RX FIFO is full 
-7     | `RX_EMPTY`        | RX FIFO is empty 
-8     | `RX_OVERFLOW`     | RX FIFO overflow has occurred 
-9     | `TX_OVERFLOW`     | Write attempted while TX FIFO was full 
-31:10 | -                 | Reserved 
-
-`RX_OVERFLOW` and `TX_OVERFLOW` are sticky flags, cleared when `STATUS` is read.
+0     | `TX_BUSY`         | Transmitter is currently active  
+1     | `RX_BUSY`         | Receiver is currently active  
+2     | `RX_STOP_FAULT`   | Stop-bit error detected  
+3     | `RX_PARITY_FAULT` | Parity error detected  
+4     | `TX_FULL`         | TX FIFO is full  
+5     | `TX_EMPTY`        | TX FIFO is empty  
+6     | `RX_FULL`         | RX FIFO is full  
+7     | `RX_EMPTY`        | RX FIFO is empty  
+8     | `RX_OVERFLOW`     | RX FIFO overflow has occurred  
+9     | `TX_OVERFLOW`     | Write attempted while TX FIFO was full  
+31:10 | -                 | Reserved  
+ 
+`RX_OVERFLOW` and `TX_OVERFLOW` are sticky flags, cleared when `STATUS` is read.  
 
 ### CTRL (0x0C)
-1:0   | `PARITY_MODE` | UART parity configuration (0 = None, 1 = Odd, 2 = Even)
-15:2  | -             | Reserved  
-31:16 | `BAUD_DIV`    | Baud-rate clock divider 
+1:0   | `PARITY_MODE` | UART parity configuration (0 = None, 1 = Odd, 2 = Even)  
+15:2  | -             | Reserved    
+31:16 | `BAUD_DIV`    | Baud-rate clock divider   
 
 ## FIFO Behaviour
 Both TX and RX use 8-byte circular FIFOs.
