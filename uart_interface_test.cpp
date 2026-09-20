@@ -46,7 +46,6 @@ int main(int argc, char** argv) {
   top->write_data = 0;
   top->rx  =  1;
 
-
   // Run reset for a few clock cycles
   for (int i = 0; i < 5; i++) {
     clock_cycle(*top, *context, *trace);
@@ -85,6 +84,23 @@ int main(int argc, char** argv) {
     baud_cycle(*top, *context, *trace);
     rx += 5;
   }
+
+  // Read until rx fifo is empty
+  uint8_t rx_data;
+  bool rx_empty = false;
+  while (!rx_empty) {
+    top->addr = 0x4;
+    top->read = 1;
+    clock_cycle(*top, *context, *trace);
+    rx_data = top->read_data;
+    top->addr = 0x8;
+    clock_cycle(*top, *context, *trace);
+    
+    rx_empty = ((top->read_data >> 7) & 0x1);
+    printf("Read %d\n", rx_data);
+  }
+  top->read = 0;
+  clock_cycle(*top, *context, *trace);
 
   trace->close();
   top->final();

@@ -51,6 +51,8 @@ fifo fifo_rx (.write(rx_data_ready), .read(rx_fifo_read), .data_in(rx_fifo_in), 
 // Don't register tx fifo writes to reduce latency and avoid timing issues on single-cycle writes
 assign tx_fifo_write = write && !tx_full && (addr[3:0] == TX_DATA);
 assign tx_fifo_in = write_data[7:0];
+// Don't register rx fifo read to avoid delayed rx_empty
+assign rx_fifo_read = read && !rx_empty && (addr[3:0] == RX_DATA);
 
 always_comb begin
   parity_mode = ctrl[1:0];
@@ -71,13 +73,10 @@ always_ff @(posedge clk or negedge rstN) begin
     tx_data_valid <= '0;
     tx_fifo_state <= 0;
     tx_fifo_read <= '0;
-    rx_fifo_read <= 0;
     tx_overflow <= '0;
     rx_overflow <= '0;
     read_data <= '0;
   end else begin
-    rx_fifo_read <= '0;
-    
     if (write) begin
       case (addr[3:0])
         TX_DATA: begin
@@ -92,7 +91,6 @@ always_ff @(posedge clk or negedge rstN) begin
         RX_DATA: begin
           if (!rx_empty) begin
             read_data <= {24'b0, rx_fifo_out};
-            rx_fifo_read <= '1;
           end
         end
         STATUS: begin
