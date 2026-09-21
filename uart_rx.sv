@@ -17,11 +17,11 @@ module uart_rx
 );
 
   typedef enum logic [2:0] {
-    IDLE = 3'd0,
-    START_BIT = 3'd1,
-    DATA_BITS = 3'd2,
-    PARITY_BIT = 3'd3,
-    STOP_BIT = 3'd4
+    IDLE,
+    START_BIT,
+    DATA_BITS,
+    PARITY_BIT,
+    STOP_BIT
   } uart_rx_state_e;
 
   uart_rx_state_e state, next_state;
