@@ -66,6 +66,13 @@ module fifo
     end
   end
 
+  /* verilator lint_off SYNCASYNCNET */
+  assert property (@(posedge clk)
+    disable iff (!rstN_sync)
+    !(read && empty)
+  );
+  /* verilator lint_on SYNCASYNCNET */
+
 endmodule
 
 `end_keywords

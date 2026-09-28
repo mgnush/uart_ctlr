@@ -129,6 +129,17 @@ module uart_interface
     end
   end
   
+  /* verilator lint_off SYNCASYNCNET */
+  assert property (@(posedge clk)
+    disable iff (!rstN_sync)
+    !(read && write)
+  );
+  assert property (@(posedge clk)
+    disable iff (!rstN_sync)
+    (write && (addr[3:0] == TX_DATA) && tx_full) |=> tx_overflow
+  );
+  /* verilator lint_on SYNCASYNCNET */
+  
 endmodule
 
 `end_keywords

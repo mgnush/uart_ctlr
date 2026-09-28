@@ -86,6 +86,7 @@ module uart_tx
           if (send_data) begin
             state <= START_BIT;
             baud_counter <= '0;
+            send_data <= '0;
           end
         end
 

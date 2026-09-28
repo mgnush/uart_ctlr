@@ -8,7 +8,6 @@
 #include "Vuart_interface.h" 
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "Vuart_interface___024root.h"
 
 void clock_cycle(Vuart_interface& top, VerilatedContext& context, VerilatedVcdC &trace) {
   top.clk = 0;
