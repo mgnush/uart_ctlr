@@ -1,7 +1,6 @@
 `begin_keywords "1800-2017"
 /* verilator lint_off IMPORTSTAR */
 import types_pkg::*;
-//Make depth a parameter
 /* Implement as memory-like registers / circular fifo
    which should scale better at higher depths.
 */
@@ -9,7 +8,7 @@ module fifo
 #(parameter DEPTH = 8)
 (
   input logic clk,
-  input logic rstN,
+  input logic rstN_sync,
   input logic write,
   input logic read,
   input logic [7:0] data_in, 
@@ -38,9 +37,8 @@ module fifo
     data_out = data[read_i];
   end
 
-  always_ff @(posedge clk or negedge rstN) begin
-    if (!rstN) begin
-      data <= '{default:'0};
+  always_ff @(posedge clk or negedge rstN_sync) begin
+    if (!rstN_sync) begin
       write_i <= '0;
       read_i <= '0;
       full_counter <= '0;

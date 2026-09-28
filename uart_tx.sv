@@ -5,12 +5,13 @@ import types_pkg::*;
 /* Data_valid is registered as send_data if received while
    ready is asserted. This means that from idle, it a 
    start condition is sent with a 2 cycle delay from data_valid.
+   Note that all outputs are registered.
 */
 
 module uart_tx 
 (
   input logic clk,
-  input logic rstN,
+  input logic rstN_sync,
   input logic [7:0] tx_data,
   input uart_parity_e parity_mode,
   input logic data_valid,
@@ -58,8 +59,8 @@ module uart_tx
     endcase
   end
   
-  always_ff @(posedge clk or negedge rstN) begin
-    if (!rstN) begin
+  always_ff @(posedge clk or negedge rstN_sync) begin
+    if (!rstN_sync) begin
       state <= IDLE;
       tx <= '1;
       bit_count <= '0;

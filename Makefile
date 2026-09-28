@@ -45,7 +45,7 @@ FIFO_DEPTH ?= 8
 .PHONY: uart
 uart: 
 	$(VERILATOR) $(VFLAGS) \
-		--cc types_pkg.sv fifo.sv uart_tx.sv uart_rx.sv uart_interface.sv \
+		--cc types_pkg.sv reset_sync.sv fifo.sv uart_tx.sv uart_rx.sv uart_interface.sv \
 		--top-module uart_interface \
 		-GFIFO_DEPTH=$(FIFO_DEPTH) \
 		--exe uart_interface_test.cpp \

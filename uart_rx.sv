@@ -5,7 +5,7 @@ import types_pkg::*;
 module uart_rx 
 (
   input logic clk,
-  input logic rstN,
+  input logic rstN_sync,
   input uart_parity_e parity_mode,
   input logic rx,
   input logic [15:0] baud_div,
@@ -48,8 +48,8 @@ module uart_rx
     endcase
   end
   
-  always_ff @(posedge clk or negedge rstN) begin
-    if (!rstN) begin
+  always_ff @(posedge clk or negedge rstN_sync) begin
+    if (!rstN_sync) begin
       state <= IDLE;
       bit_count <= '0;
       busy <= '0;
